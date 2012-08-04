@@ -1,0 +1,76 @@
+<?php
+
+$configFile = dirname(__FILE__) . '/config.php';
+
+if (file_exists($configFile))
+{
+    include $configFile;
+}
+else
+{
+    die("Please rename the config-sample.php file to config.php and add your Flickr API key and secret to it\n");
+}
+
+require_once dirname(__FILE__) . '/DPZFlickr.php';
+
+// Build the URL for the current page and use it for our callback
+$callback = sprintf('%s://%s:%d%s',
+    ($_SERVER['HTTPS'] == "on") ? 'https' : 'http',
+    $_SERVER['SERVER_NAME'],
+    $_SERVER['SERVER_PORT'],
+    $_SERVER['SCRIPT_NAME']
+    );
+
+$flickr = new DPZFlickr($flickrApiKey, $flickrApiSecret, $callback);
+
+if (!$flickr->authenticate('read'))
+{
+    die("Hmm, something went wrong...\n");
+}
+
+$userNsid = $flickr->getOauthData(DPZFlickr::USER_NSID);
+$userName = $flickr->getOauthData(DPZFlickr::USER_NAME);
+$userFullName = $flickr->getOauthData(DPZFlickr::USER_FULL_NAME);
+
+$parameters =  array(
+    'per_page' => 100,
+    'extras' => 'url_sq,path_alias',
+);
+
+$response = $flickr->call('flickr.stats.getPopularPhotos', $parameters);
+
+$ok = @$response['stat'];
+
+if ($ok = 'ok')
+{
+    $photos = $response['photos'];
+}
+else
+{
+    $err = @$response['err'];
+    die("Error: " . @$err['msg']);
+}
+
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>DPZFlickr Auth Example</title>
+        <link rel="stylesheet" href="example.css" />
+    </head>
+    <body>
+        <h1>Popular photos from <?php echo $userName ?></h1>
+        <ul id="photos">
+            <?php foreach ($photos['photo'] as $photo) { ?>
+                <li>
+                    <a href="<?php echo sprintf("http://flickr.com/photos/%s/%s/", $photo['pathalias'], $photo['id']) ?>">
+                        <img src="<?php echo $photo['url_sq'] ?>" />
+                    </a>
+                </li>
+            <?php } ?>
+        </ul>
+        <p class="signout"><a href="example-auth-signout.php">Sign
+            out</a></p>
+    </body>
+</html>
+

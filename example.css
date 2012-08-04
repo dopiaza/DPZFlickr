@@ -1,0 +1,38 @@
+body
+{
+    background-color: white;
+    color: #333;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 12pt;
+    padding: 3em;
+}
+
+ul#photos
+{
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    width: 750px;
+    overflow: hidden;
+}
+
+ul#photos li
+{
+    float:left;
+    padding: 0;
+    margin: 0;
+    width: 75px;
+    height: 75px;
+}
+
+ul#photos img
+{
+    padding: 0;
+    margin: 0;
+}
+
+p.signout
+{
+    margin-top: 3em;
+    clear: both;
+}
