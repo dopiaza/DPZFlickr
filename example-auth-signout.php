@@ -1,7 +1,5 @@
 <?php
 
-header("Content-type: text.plain");
-
 $configFile = dirname(__FILE__) . '/config.php';
 
 if (file_exists($configFile))
