@@ -11,26 +11,32 @@ else
     die("Please rename the config-sample.php file to config.php and add your Flickr API key and secret to it\n");
 }
 
-require_once dirname(__FILE__) . '/DPZFlickr.php';
+spl_autoload_register(function($className)
+{
+    $className = str_replace ('\\', DIRECTORY_SEPARATOR, $className);
+    include (dirname(__FILE__) . '/../src/' . $className . '.php');
+});
+
+use \DPZ\Flickr;
 
 // Build the URL for the current page and use it for our callback
 $callback = sprintf('%s://%s:%d%s',
-    ($_SERVER['HTTPS'] == "on") ? 'https' : 'http',
+    (@$_SERVER['HTTPS'] == "on") ? 'https' : 'http',
     $_SERVER['SERVER_NAME'],
     $_SERVER['SERVER_PORT'],
     $_SERVER['SCRIPT_NAME']
     );
 
-$flickr = new DPZFlickr($flickrApiKey, $flickrApiSecret, $callback);
+$flickr = new Flickr($flickrApiKey, $flickrApiSecret, $callback);
 
 if (!$flickr->authenticate('read'))
 {
     die("Hmm, something went wrong...\n");
 }
 
-$userNsid = $flickr->getOauthData(DPZFlickr::USER_NSID);
-$userName = $flickr->getOauthData(DPZFlickr::USER_NAME);
-$userFullName = $flickr->getOauthData(DPZFlickr::USER_FULL_NAME);
+$userNsid = $flickr->getOauthData(Flickr::USER_NSID);
+$userName = $flickr->getOauthData(Flickr::USER_NAME);
+$userFullName = $flickr->getOauthData(Flickr::USER_FULL_NAME);
 
 $parameters =  array(
     'per_page' => 100,
@@ -41,7 +47,7 @@ $response = $flickr->call('flickr.stats.getPopularPhotos', $parameters);
 
 $ok = @$response['stat'];
 
-if ($ok = 'ok')
+if ($ok == 'ok')
 {
     $photos = $response['photos'];
 }
@@ -69,8 +75,15 @@ else
                 </li>
             <?php } ?>
         </ul>
-        <p class="signout"><a href="example-auth-signout.php">Sign
+        <p class="signout"><a href="signout.php">Sign
             out</a></p>
+
+        <p><a href="index.php">Unauthenticated Example</a> |
+            <a href="auth.php">Authenticated Example</a> |
+            <a href="convert-token.php">Convert Token Example</a> <br/>
+            <a href="upload.php">Upload Photo Example</a> |
+            <a href="replace.php">Replace Photo Example</a>
+        </p>
     </body>
 </html>
 
