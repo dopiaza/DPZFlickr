@@ -1,3 +1,8 @@
+Version 1.2.1 - 16th September 2012
+===================================
+
+Minor documentation updates
+
 Version 1.2 - 16th September 2012
 =================================
 

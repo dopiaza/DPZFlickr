@@ -27,7 +27,7 @@ namespace DPZ;
 
 class Flickr
 {
-    const VERSION = 1.2;
+    const VERSION = 1.2.1;
 
     /**
      * Session variable name used to store authentication data
