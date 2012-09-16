@@ -5,10 +5,12 @@ DPZFlickr is a Flickr API kit for PHP that supports authentication using OAuth 1
 
 DPZFlickr is Copyright (c) 2012 David Wilkinson and is distributed under the MIT licence.
 
-To see how to use this library, some examples are included:
+To see how to use this library, take a look in the examples directory
 
-* example.php - a simple non-authenticated Flickr call
-* example-auth.php - making an authenticated Flickr call
-* example-convert-token.php - converting an old-style authentication token to an OAuth access token
+* index.php - a simple non-authenticated Flickr call
+* auth.php - making an authenticated Flickr call
+* convert-token.php - converting an old-style authentication token to an OAuth access token
+* upload.php - upload a new photo
+* replace.php - replace an existing photo
 
 
