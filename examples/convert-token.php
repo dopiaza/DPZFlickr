@@ -11,9 +11,15 @@ else
     die("Please rename the config-sample.php file to config.php and add your Flickr API key and secret to it\n");
 }
 
-require_once dirname(__FILE__) . '/DPZFlickr.php';
+spl_autoload_register(function($className)
+{
+    $className = str_replace ('\\', DIRECTORY_SEPARATOR, $className);
+    include (dirname(__FILE__) . '/../src/' . $className . '.php');
+});
 
-$flickr = new DPZFlickr($flickrApiKey, $flickrApiSecret);
+use \DPZ\Flickr;
+
+$flickr = new Flickr($flickrApiKey, $flickrApiSecret);
 
 $token = $_POST['token'];
 
@@ -39,11 +45,11 @@ if (!empty($token))
         </form>
     <?php if (!empty($token)) { ?>
             <p>
-                NSID: <?php echo $flickr->getOauthData(DPZFlickr::USER_NSID) ?><br />
-                User Name: <?php echo $flickr->getOauthData(DPZFlickr::USER_NAME) ?><br />
-                Full Name: <?php echo $flickr->getOauthData(DPZFlickr::USER_FULL_NAME) ?><br />
-                Access Token: <?php echo $flickr->getOauthData(DPZFlickr::OAUTH_ACCESS_TOKEN) ?><br />
-                Access Token Secret: <?php echo $flickr->getOauthData(DPZFlickr::OAUTH_ACCESS_TOKEN_SECRET) ?>
+                NSID: <?php echo $flickr->getOauthData(Flickr::USER_NSID) ?><br />
+                User Name: <?php echo $flickr->getOauthData(Flickr::USER_NAME) ?><br />
+                Full Name: <?php echo $flickr->getOauthData(Flickr::USER_FULL_NAME) ?><br />
+                Access Token: <?php echo $flickr->getOauthData(Flickr::OAUTH_ACCESS_TOKEN) ?><br />
+                Access Token Secret: <?php echo $flickr->getOauthData(Flickr::OAUTH_ACCESS_TOKEN_SECRET) ?>
             </p>
     <?php } ?>
     </body>

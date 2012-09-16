@@ -11,9 +11,15 @@ else
     die("Please rename the config-sample.php file to config.php and add your Flickr API key and secret to it\n");
 }
 
-require_once dirname(__FILE__) . '/DPZFlickr.php';
+spl_autoload_register(function($className)
+{
+    $className = str_replace ('\\', DIRECTORY_SEPARATOR, $className);
+    include (dirname(__FILE__) . '/../src/' . $className . '.php');
+});
 
-$flickr = new DPZFlickr($flickrApiKey, $flickrApiSecret);
+use \DPZ\Flickr;
+
+$flickr = new Flickr($flickrApiKey, $flickrApiSecret);
 
 $parameters =  array(
     'user_id' => '50317659@N00',
@@ -43,6 +49,7 @@ $photos = $response['photos'];
                 </li>
             <?php } ?>
         </ul>
+        <p><a href="index.php">Unauthenticated Example</a> | <a href="auth.php">Authenticated Example</a> | <a href="convert-token.php">Convert Token Example</a></p>
     </body>
 </html>
 

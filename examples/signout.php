@@ -11,9 +11,15 @@ else
     die("Please rename the config-sample.php file to config.php and add your Flickr API key and secret to it\n");
 }
 
-require_once dirname(__FILE__) . '/DPZFlickr.php';
+spl_autoload_register(function($className)
+{
+    $className = str_replace ('\\', DIRECTORY_SEPARATOR, $className);
+    include (dirname(__FILE__) . '/../src/' . $className . '.php');
+});
 
-$flickr = new DPZFlickr($flickrApiKey, $flickrApiSecret);
+use \DPZ\Flickr;
+
+$flickr = new Flickr($flickrApiKey, $flickrApiSecret);
 
 $flickr->signout();
 
@@ -26,6 +32,6 @@ $flickr->signout();
     </head>
     <body>
         <h1>Signed out</h1>
-        <p>You have now signed out of this Flickr session. <a href="example-auth.php">Sign in</a>.</p>
+        <p>You have now signed out of this Flickr session. <a href="auth.php">Sign in</a>.</p>
     </body>
 </html>

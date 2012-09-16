@@ -23,14 +23,16 @@
  *
  */
 
-class DPZFlickr
+namespace DPZ;
+
+class Flickr
 {
-    const VERSION = 1.0;
+    const VERSION = 1.1;
 
     /**
      * Session variable name used to store authentication data
      */
-    const SESSION_OAUTH_DATA = 'DPZFlickrSessionOauthData';
+    const SESSION_OAUTH_DATA = 'FlickrSessionOauthData';
 
     /**
      * Key names for various authentication data items
@@ -90,7 +92,7 @@ class DPZFlickr
     private $httpTimeout;
 
     /**
-     * Create a new DPZFlickr object
+     * Create a new Flickr object
      *
      * @param string $key The Flickr API key
      * @param string $secret The Flickr API secret
@@ -184,7 +186,7 @@ class DPZFlickr
     }
 
     /**
-     * Sign the current user out of the current DPZFlickr session. Note this doesn't affect the user's state on the
+     * Sign the current user out of the current Flickr session. Note this doesn't affect the user's state on the
      * Flickr web site itself, it merely removes the current request/access tokens from the session.
      *
      */

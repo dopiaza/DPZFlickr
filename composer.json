@@ -1,0 +1,17 @@
+{
+    "name": "dpz/flickr",
+    "description": "PHP client library for Flickr.",
+    "require": {
+        "ext-curl": "0"
+    },
+    "autoload": {
+        "psr-0": {
+            "DPZ": "src/"
+        }  
+    },
+    "authors": [
+        {
+            "name": "David Wilkinson"
+        }
+    ]
+}
