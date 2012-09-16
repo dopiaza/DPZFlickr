@@ -52,5 +52,11 @@ if (!empty($token))
                 Access Token Secret: <?php echo $flickr->getOauthData(Flickr::OAUTH_ACCESS_TOKEN_SECRET) ?>
             </p>
     <?php } ?>
+        <p><a href="index.php">Unauthenticated Example</a> |
+            <a href="auth.php">Authenticated Example</a> |
+            <a href="convert-token.php">Convert Token Example</a> <br/>
+            <a href="upload.php">Upload Photo Example</a> |
+            <a href="replace.php">Replace Photo Example</a>
+        </p>
     </body>
 </html>

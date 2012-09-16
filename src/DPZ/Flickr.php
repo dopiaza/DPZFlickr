@@ -27,7 +27,7 @@ namespace DPZ;
 
 class Flickr
 {
-    const VERSION = 1.1;
+    const VERSION = 1.2;
 
     /**
      * Session variable name used to store authentication data
@@ -60,6 +60,8 @@ class Flickr
     const AUTH_ENDPOINT = 'http://www.flickr.com/services/oauth/authorize';
     const ACCESS_TOKEN_ENDPOINT = 'http://www.flickr.com/services/oauth/access_token';
     const API_ENDPOINT = 'http://www.flickr.com/services/rest';
+    const UPLOAD_ENDPOINT = 'http://www.flickr.com/services/upload/';
+    const REPLACE_ENDPOINT = 'http://www.flickr.com/services/replace/';
 
     /**
      * @var string Flickr API key
@@ -130,6 +132,60 @@ class Flickr
         $response = $this->httpRequest(self::API_ENDPOINT, $requestParams);
 
         return empty($response) ? NULL : unserialize($response);
+    }
+
+    /**
+     * Upload a photo
+     * @param $parameters
+     * @return mixed|null
+     */
+    public function upload($parameters)
+    {
+        $requestParams = ($parameters == NULL ? array() : $parameters);
+
+        $requestParams = array_merge($requestParams, $this->getOauthParams());
+
+        $requestParams['oauth_token'] = $this->getOauthData(self::OAUTH_ACCESS_TOKEN);
+
+        // We don't want to include the photo when signing the request
+        // so temporarily remove it whilst we sign
+        $photo = $requestParams['photo'];
+        unset($requestParams['photo']);
+        $this->sign(self::UPLOAD_ENDPOINT, $requestParams);
+        $requestParams['photo'] = $photo;
+
+        $xml = $this->httpRequest(self::UPLOAD_ENDPOINT, $requestParams);
+
+        $response = $this->getResponseFromXML($xml);
+
+        return empty($response) ? NULL : $response;
+    }
+
+    /**
+     * Replace a photo
+     * @param $parameters
+     * @return mixed|null
+     */
+    public function replace($parameters)
+    {
+        $requestParams = ($parameters == NULL ? array() : $parameters);
+
+        $requestParams = array_merge($requestParams, $this->getOauthParams());
+
+        $requestParams['oauth_token'] = $this->getOauthData(self::OAUTH_ACCESS_TOKEN);
+
+        // We don't want to include the photo when signing the request
+        // so temporarily remove it whilst we sign
+        $photo = $requestParams['photo'];
+        unset($requestParams['photo']);
+        $this->sign(self::REPLACE_ENDPOINT, $requestParams);
+        $requestParams['photo'] = $photo;
+
+        $xml = $this->httpRequest(self::REPLACE_ENDPOINT, $requestParams);
+
+        $response = $this->getResponseFromXML($xml);
+
+        return empty($response) ? NULL : $response;
     }
 
     /**
@@ -527,6 +583,70 @@ class Flickr
         );
 
         return md5($reasonablyDistinctiveString);
+    }
+
+    /**
+     * Get the response structure from an XML response.
+     * Annoyingly, upload and replace returns XML rather than serialised PHP.
+     * The responses are pretty simple, so rather than depend on an XML parser we'll fake it and
+     * decode using regexps
+     * @param $xml
+     * @return mixed
+     */
+    private function getResponseFromXML($xml)
+    {
+        $rsp = array();
+        $stat = 'fail';
+        $matches = array();
+        preg_match('/<rsp stat="(ok|fail)">/s', $xml, $matches);
+        if (count($matches) > 0)
+        {
+            $stat = $matches[1];
+        }
+        if ($stat == 'ok')
+        {
+            // do this in individual steps in case the order of the attributes ever changes
+            $rsp['stat'] = $stat;
+            $photoid = array();
+            $matches = array();
+            preg_match('/<photoid.*>(\d+)<\/photoid>/s', $xml, $matches);
+            if (count($matches) > 0)
+            {
+                $photoid['_content'] = $matches[1];
+            }
+            $matches = array();
+            preg_match('/<photoid.* secret="(\w+)".*>/s', $xml, $matches);
+            if (count($matches) > 0)
+            {
+                $photoid['secret'] = $matches[1];
+            }
+            $matches = array();
+            preg_match('/<photoid.* originalsecret="(\w+)".*>/s', $xml, $matches);
+            if (count($matches) > 0)
+            {
+                $photoid['originalsecret'] = $matches[1];
+            }
+            $rsp['photoid'] = $photoid;
+        }
+        else
+        {
+            $rsp['stat'] = 'fail';
+            $err = array();
+            $matches = array();
+            preg_match('/<err.* code="([^"]*)".*>/s', $xml, $matches);
+            if (count($matches) > 0)
+            {
+                $err['code'] = $matches[1];
+            }
+            $matches = array();
+            preg_match('/<err.* msg="([^"]*)".*>/s', $xml, $matches);
+            if (count($matches) > 0)
+            {
+                $err['msg'] = $matches[1];
+            }
+            $rsp['err'] = $err;
+        }
+        return $rsp;
     }
 
     /**

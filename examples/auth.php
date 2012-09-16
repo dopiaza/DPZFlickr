@@ -21,7 +21,7 @@ use \DPZ\Flickr;
 
 // Build the URL for the current page and use it for our callback
 $callback = sprintf('%s://%s:%d%s',
-    ($_SERVER['HTTPS'] == "on") ? 'https' : 'http',
+    (@$_SERVER['HTTPS'] == "on") ? 'https' : 'http',
     $_SERVER['SERVER_NAME'],
     $_SERVER['SERVER_PORT'],
     $_SERVER['SCRIPT_NAME']
@@ -47,7 +47,7 @@ $response = $flickr->call('flickr.stats.getPopularPhotos', $parameters);
 
 $ok = @$response['stat'];
 
-if ($ok = 'ok')
+if ($ok == 'ok')
 {
     $photos = $response['photos'];
 }
@@ -78,7 +78,12 @@ else
         <p class="signout"><a href="signout.php">Sign
             out</a></p>
 
-        <p><a href="index.php">Unauthenticated Example</a> | <a href="auth.php">Unauthenticated Example</a> | <a href="convert-token.php">Convert Token Example</a></p>
+        <p><a href="index.php">Unauthenticated Example</a> |
+            <a href="auth.php">Authenticated Example</a> |
+            <a href="convert-token.php">Convert Token Example</a> <br/>
+            <a href="upload.php">Upload Photo Example</a> |
+            <a href="replace.php">Replace Photo Example</a>
+        </p>
     </body>
 </html>
 
