@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Flickr API Kit with support for OAuth 1.0a for PHP >= 5.1.2. Requires curl.
+ * Flickr API Kit with support for OAuth 1.0a for PHP >= 5.3.0. Requires curl.
  *
  * Author: David Wilkinson
  * Web: http://dopiaza.org/
@@ -27,7 +27,7 @@ namespace DPZ;
 
 class Flickr
 {
-    const VERSION = '1.2.2';
+    const VERSION = '1.2.3';
 
     /**
      * Session variable name used to store authentication data

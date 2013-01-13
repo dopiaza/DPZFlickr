@@ -1,3 +1,9 @@
+Version 1.2.3 - 13th January 2013
+=================================
+
+Fix documentation to list correct PHP version needed
+Update composer.json
+
 Version 1.2.2 - 16th September 2012
 ===================================
 
