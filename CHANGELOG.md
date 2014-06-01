@@ -1,3 +1,8 @@
+Version 1.3 - 1st June 2014
+=================================
+
+Update all Flickr API URLs to use https
+
 Version 1.2.3 - 13th January 2013
 =================================
 

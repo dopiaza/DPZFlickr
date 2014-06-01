@@ -27,7 +27,7 @@ namespace DPZ;
 
 class Flickr
 {
-    const VERSION = '1.2.3';
+    const VERSION = '1.3';
 
     /**
      * Session variable name used to store authentication data
@@ -56,12 +56,12 @@ class Flickr
     /**
      * Various API endpoints
      */
-    const REQUEST_TOKEN_ENDPOINT = 'http://www.flickr.com/services/oauth/request_token';
-    const AUTH_ENDPOINT = 'http://www.flickr.com/services/oauth/authorize';
-    const ACCESS_TOKEN_ENDPOINT = 'http://www.flickr.com/services/oauth/access_token';
-    const API_ENDPOINT = 'http://www.flickr.com/services/rest';
-    const UPLOAD_ENDPOINT = 'http://www.flickr.com/services/upload/';
-    const REPLACE_ENDPOINT = 'http://www.flickr.com/services/replace/';
+    const REQUEST_TOKEN_ENDPOINT = 'https://www.flickr.com/services/oauth/request_token';
+    const AUTH_ENDPOINT = 'https://www.flickr.com/services/oauth/authorize';
+    const ACCESS_TOKEN_ENDPOINT = 'https://www.flickr.com/services/oauth/access_token';
+    const API_ENDPOINT = 'https://api.flickr.com/services/rest';
+    const UPLOAD_ENDPOINT = 'https://up.flickr.com/services/upload/';
+    const REPLACE_ENDPOINT = 'https://up.flickr.com/services/replace/';
 
     /**
      * @var string Flickr API key
