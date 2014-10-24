@@ -102,8 +102,11 @@ class Flickr
      */
     public function __construct($key, $secret = NULL, $callback = NULL)
     {
-        session_start();
-
+        // start a new session if there isn't one already
+        if (session_id() == '') {
+            session_start();
+        }
+        
         $this->consumerKey = $key;
         $this->consumerSecret = $secret;
         $this->callback = $callback;
