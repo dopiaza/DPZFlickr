@@ -687,4 +687,22 @@ class Flickr
 
         return $response;
     }
+
+
+    /**
+     * Checks if a oauth token is valid
+     *
+     * @param string $oauthAccessToken
+     * @param string $oauthAccessTokenSecret
+     * @return bool
+     */
+    public function isValidOauthToken($oauthAccessToken, $oauthAccessTokenSecret)
+    {
+        $this->setOauthData(self::OAUTH_ACCESS_TOKEN, $oauthAccessToken);
+        $this->setOauthData(self::OAUTH_ACCESS_TOKEN_SECRET, $oauthAccessTokenSecret);
+
+        $response = $this->call('flickr.auth.oauth.checkToken');
+
+        return (boolean)@$response['stat'] == 'ok';
+    }
 }
