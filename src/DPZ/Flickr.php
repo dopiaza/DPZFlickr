@@ -93,6 +93,8 @@ class Flickr
      */
     private $httpTimeout;
 
+    private $convertedToken = array();
+
     /**
      * Create a new Flickr object
      *
@@ -106,7 +108,7 @@ class Flickr
         if (session_id() == '') {
             session_start();
         }
-        
+
         $this->consumerKey = $key;
         $this->consumerSecret = $secret;
         $this->callback = $callback;
@@ -273,13 +275,14 @@ class Flickr
      */
     public function getOauthData($key)
     {
-        $val = NULL;
-        $data = @$_SESSION[self::SESSION_OAUTH_DATA];
-        if (is_array($data))
+        if ( ! isset($this->convertedToken[$key]))
         {
-            $val = @$data[$key];
+            return NULL;
         }
-        return $val;
+        else
+        {
+            return $this->convertedToken[$key];
+        }
     }
 
     /**
@@ -322,19 +325,24 @@ class Flickr
         $rsp = $this->httpRequest(self::API_ENDPOINT, $param);
         $response = unserialize($rsp);
 
-        if (@$response['stat'] == 'ok')
+        if ($response === FALSE)
+        {
+            throw new \Exception('Error while trying to convert Flickr Old Token.');
+        }
+
+        if (@$response['stat'] === 'ok')
         {
             $accessToken = @$response['auth']['access_token']['oauth_token'];
             $accessTokenSecret = @$response['auth']['access_token']['oauth_token_secret'];
+
             $this->setOauthData(self::OAUTH_ACCESS_TOKEN, $accessToken);
             $this->setOauthData(self::OAUTH_ACCESS_TOKEN_SECRET, $accessTokenSecret);
 
             $response = $this->call('flickr.auth.oauth.checkToken');
-            if (@$response['stat'] == 'ok')
+
+            if (@$response['stat'] === 'ok')
             {
-                $this->setOauthData(self::USER_NSID, @$response['oauth']['user']['nsid']);
-                $this->setOauthData(self::USER_NAME, @$response['oauth']['user']['username']);
-                $this->setOauthData(self::USER_FULL_NAME, @$response['oauth']['user']['fullname']);
+                return $this->convertedToken;
             }
         }
     }
@@ -359,13 +367,7 @@ class Flickr
 
     private function setOauthData($key, $value)
     {
-        $data = @$_SESSION[self::SESSION_OAUTH_DATA];
-        if (!is_array($data))
-        {
-            $data = array();
-        }
-        $data[$key] = $value;
-        $_SESSION[self::SESSION_OAUTH_DATA] = $data;
+        $this->convertedToken[$key] = $value;
     }
 
     /**
@@ -665,6 +667,8 @@ class Flickr
 
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
         curl_setopt($curl, CURLOPT_TIMEOUT, $this->httpTimeout);
+		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
+		curl_setopt($curl, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1);
 
         if ($this->method == 'POST')
         {
@@ -686,5 +690,23 @@ class Flickr
         $this->lastHttpResponseCode = $headers['http_code'];
 
         return $response;
+    }
+
+
+    /**
+     * Checks if a oauth token is valid
+     *
+     * @param string $oauthAccessToken
+     * @param string $oauthAccessTokenSecret
+     * @return bool
+     */
+    public function isValidOauthToken($oauthAccessToken, $oauthAccessTokenSecret)
+    {
+        $this->setOauthData(self::OAUTH_ACCESS_TOKEN, $oauthAccessToken);
+        $this->setOauthData(self::OAUTH_ACCESS_TOKEN_SECRET, $oauthAccessTokenSecret);
+
+        $response = $this->call('flickr.auth.oauth.checkToken');
+
+        return (boolean)@$response['stat'] === 'ok';
     }
 }
