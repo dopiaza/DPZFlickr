@@ -665,6 +665,9 @@ class Flickr
 
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
         curl_setopt($curl, CURLOPT_TIMEOUT, $this->httpTimeout);
+        
+        // CURLOPT_SAFE_UPLOAD defaulted to true in 5.6.0
+        curl_setopt($curl, CURLOPT_SAFE_UPLOAD, false);
 
         if ($this->method == 'POST')
         {
