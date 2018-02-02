@@ -666,8 +666,15 @@ class Flickr
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
         curl_setopt($curl, CURLOPT_TIMEOUT, $this->httpTimeout);
         
-        // CURLOPT_SAFE_UPLOAD defaulted to true in 5.6.0
-        curl_setopt($curl, CURLOPT_SAFE_UPLOAD, false);
+        if (strnatcmp(phpversion(), '7.0.0') >= 0)
+        {
+            // disabling safe uploads is no longer supported in php 7
+        }
+        else if (strnatcmp(phpversion(), '5.6.0') >= 0)
+        {
+            // in php 5.6, curl option CURLOPT_SAFE_UPLOAD defaulted to true
+            curl_setopt($curl, CURLOPT_SAFE_UPLOAD, false);
+        }
 
         if ($this->method == 'POST')
         {
