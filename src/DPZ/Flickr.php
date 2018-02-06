@@ -106,7 +106,7 @@ class Flickr
         if (session_id() == '') {
             session_start();
         }
-        
+
         $this->consumerKey = $key;
         $this->consumerSecret = $secret;
         $this->callback = $callback;
@@ -663,9 +663,9 @@ class Flickr
     {
         $curl = curl_init();
 
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_TIMEOUT, $this->httpTimeout);
-        
+
         if (strnatcmp(phpversion(), '7.0.0') >= 0)
         {
             // disabling safe uploads is no longer supported in php 7
@@ -678,8 +678,18 @@ class Flickr
 
         if ($this->method == 'POST')
         {
+            if (is_array($parameters) && array_key_exists("photo", $parameters)) {
+                if (function_exists("curl_file_create")) {
+                    $photo = $parameters["photo"];
+                    $photo = ltrim($photo, "@");
+                    if (file_exists($photo)) {
+                        $photo = curl_file_create($photo);
+                        $parameters["photo"] = $photo;
+                    }
+                }
+            }
             curl_setopt($curl, CURLOPT_URL, $url);
-            curl_setopt($curl, CURLOPT_POST, TRUE);
+            curl_setopt($curl, CURLOPT_POST, true);
             curl_setopt($curl, CURLOPT_POSTFIELDS, $parameters);
         }
         else
