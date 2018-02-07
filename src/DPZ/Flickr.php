@@ -679,6 +679,7 @@ class Flickr
         if ($this->method == 'POST')
         {
             if (is_array($parameters) && array_key_exists("photo", $parameters)) {
+                // https://binfalse.de/2016/06/21/forget-the-at-use-curl-file-create/
                 if (function_exists("curl_file_create")) {
                     $photo = $parameters["photo"];
                     $photo = ltrim($photo, "@");
